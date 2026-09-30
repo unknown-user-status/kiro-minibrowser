@@ -202,6 +202,23 @@ public class AutomationServer {
                     holder[0].compress(Bitmap.CompressFormat.PNG, 85, bos);
                     sendResponse(sock, 200, "image/png", bos.toByteArray());
                     return;
+                } else if ("/ua".equals(path) && "POST".equals(method)) {
+                    String mode = jsonStr(body, "mode");
+                    if ("desktop".equals(mode)) {
+                        engine.setUserAgent(BrowserEngine.UA_DESKTOP);
+                        response = "{\"ok\":true,\"ua\":\"desktop\"}";
+                    } else if ("mobile".equals(mode)) {
+                        engine.setUserAgent(BrowserEngine.UA_MOBILE);
+                        response = "{\"ok\":true,\"ua\":\"mobile\"}";
+                    } else {
+                        String custom = jsonStr(body, "ua");
+                        if (!custom.isEmpty()) {
+                            engine.setUserAgent(custom);
+                            response = "{\"ok\":true,\"ua\":\"custom\"}";
+                        } else {
+                            response = "{\"error\":\"mode=desktop|mobile atau ua=<string>\"}";
+                        }
+                    }
                 } else if ("/clear".equals(path)) {
                     engine.clearLogs();
                     response = "{\"ok\":true}";

@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:orientation="vertical">
-    <LinearLayout android:layout_width="match_parent" android:layout_height="48dp"
+    <LinearLayout android:layout_width="match_parent" android:layout_height="52dp"
         android:orientation="horizontal" android:background="#12131E">
         <EditText android:id="@+id/urlBar" android:layout_width="0dp"
             android:layout_height="match_parent" android:layout_weight="1"
@@ -13,6 +13,11 @@
             android:layout_height="match_parent" android:text="GO"
             android:textSize="12sp"/>
     </LinearLayout>
-    <WebView android:id="@+id/webview" android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+    <!-- FrameLayout container: WebView di bawah, cursor overlay di ATAS (z-order) -->
+    <FrameLayout android:id="@+id/browserContainer"
+        android:layout_width="match_parent" android:layout_height="0dp"
+        android:layout_weight="1">
+        <WebView android:id="@+id/webview" android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </FrameLayout>
 </LinearLayout>

@@ -73,6 +73,9 @@ public class BrowserEngine {
             container.addView(vcursor.getOverlay(), new android.view.ViewGroup.LayoutParams(
                 android.view.ViewGroup.LayoutParams.MATCH_PARENT,
                 android.view.ViewGroup.LayoutParams.MATCH_PARENT));
+            container.post(new Runnable() { @Override public void run() {
+                if (vcursor != null) vcursor.onAttached();
+            }});
             vcursor.showStatus("MiniBrowser siap — automasi aktif");
         }
     }
@@ -301,6 +304,21 @@ public class BrowserEngine {
                                      .replace("\n", "\\n") + ";" +
             "document.head.appendChild(s);})()";
         evaluateJs(wrapped, null);
+    }
+
+    // ── USER AGENT SWITCH ─────────────────────────────────────────────────
+    public static final String UA_DESKTOP =
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
+        "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+    public static final String UA_MOBILE =
+        "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) " +
+        "Chrome/120.0.0.0 Mobile Safari/537.36 MiniBrowser/1.0";
+
+    /** Ganti User Agent (desktop/mobile) — reload halaman berikutnya pakai UA baru. */
+    public void setUserAgent(final String ua) {
+        mainHandler.post(new Runnable() { @Override public void run() {
+            webview.getSettings().setUserAgentString(ua);
+        }});
     }
 
     // ── INTERCEPT RULES ───────────────────────────────────────────────────

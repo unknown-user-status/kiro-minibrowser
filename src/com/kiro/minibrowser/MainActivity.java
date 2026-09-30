@@ -46,17 +46,15 @@ public class MainActivity extends Activity {
         logPub("setContentView OK");
 
         WebView webview = findViewById(R.id.webview);
+        android.view.ViewGroup container = findViewById(R.id.browserContainer);
         engine = new BrowserEngine(this);
-        // Replace the placeholder WebView with our configured engine view
-        android.view.ViewGroup parent = (android.view.ViewGroup) webview.getParent();
-        int idx = parent.indexOfChild(webview);
-        parent.removeView(webview);
-        parent.addView(engine.webview, idx,
-            new android.view.ViewGroup.LayoutParams(
-                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
-                android.view.ViewGroup.LayoutParams.MATCH_PARENT));
-        // Attach virtual cursor overlay (di atas WebView)
-        engine.attachCursorOverlay(parent);
+        // Ganti WebView placeholder dengan engine view (di dalam FrameLayout container)
+        container.removeView(webview);
+        container.addView(engine.webview, new android.view.ViewGroup.LayoutParams(
+            android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+            android.view.ViewGroup.LayoutParams.MATCH_PARENT));
+        // Attach virtual cursor overlay DI ATAS WebView (FrameLayout z-order)
+        engine.attachCursorOverlay(container);
 
         logPub("engine created, starting server");
         AutomationServer.start(engine);

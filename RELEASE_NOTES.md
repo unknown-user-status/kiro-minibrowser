@@ -1,32 +1,49 @@
-# MiniBrowser APK — Release Notes
+# MiniBrowser APK — Release Notes (FINAL)
 
-## v8 (current) — 0ac4ebb2 — CRASH FIX ANDROID 14
-- **Fix crash "forced close"**: tambah permission FOREGROUND_SERVICE_DATA_SYNC (wajib API 34)
-- **Foreground service bekerja**: app tetap hidup di background (60+ detik terverifikasi)
-- Virtual cursor (panah putih, animasi 350ms ease-out)
-- Highlight box ungu pada elemen target
-- Status bubble (🌐 navigate / 👆 click / ✏️ fill / ⬇️ scroll / ❌ error)
-- URL bar update otomatis saat navigasi
-- js_result masuk event log (fix notifyEvent)
-- Port 8888 (hindari blokir 8080)
-- Bind 0.0.0.0 → akses via IP LAN
+## v12 (final) — bafaa082
+- **UA switch**: `/ua` endpoint (desktop/mobile/custom) — kunci untuk situs yang
+  redirect mobile (YouTube trending, dll)
+- Virtual cursor emas 64px + glow + highlight + status bubble
+- URL bar update otomatis
+- Foreground service (app tidak di-freeze MIUI saat background)
+- js_result masuk event log
+- Port 8888, bind 0.0.0.0
+- 17 endpoint API otomasi
 
-## Hasil Test v8 (30 Sep 2026)
-| Test | Hasil |
-|---|---|
-| Health check | ✅ 200 |
-| Navigate example.com | ✅ title "Example Domain" |
-| Click link → iana.org | ✅ navigate sukses |
-| Fill wikipedia search | ✅ "FILLED" |
-| Extract h2 | ✅ 5 section terdeteksi |
-| Foreground 60s background | ✅ server tetap hidup |
-| Intercept images | ✅ 6 image diblokir |
+## Riwayat versi
+| v | MD5 | Fitur utama |
+|---|---|---|
+| v1 | 8884fc3a | awal (bind 127.0.0.1) |
+| v3 | 1b3ad382 | bind 0.0.0.0 |
+| v4 | fe776858 | fix /events |
+| v5 | a20cb3cd | virtual cursor |
+| v6 | e78f356a | foreground service |
+| v7 | ae1e5606 | port 8888 |
+| v8 | 0ac4ebb2 | crash fix Android 14 (FGS permission) |
+| v9 | b96f839e | cursor visible (FrameLayout fix) |
+| v10 | 10310abe | cursor debug + auto-demo |
+| v11 | 976b2c47 | cursor clamp |
+| **v12** | **bafaa082** | **UA switch — FINAL** |
+
+## 12 pelajaran teknis (Termux + Android 14 + MIUI)
+1. Android 14 network namespace — loopback antar app terpisah → bind 0.0.0.0
+2. API 34 wajib permission per foregroundServiceType (dataSync → FOREGROUND_SERVICE_DATA_SYNC)
+3. POST_NOTIFICATIONS = runtime permission (API 33+)
+4. Overlay kursor HARUS di FrameLayout (di LinearLayout = tinggi 0 → tak terlihat)
+5. MIUI blokir background activity start — app hanya bisa dibuka manual dari launcher
+6. MIUI freeze network app background — server hanya hidup saat app foreground
+7. IP HP dinamis (DHCP) — selalu cek termux-wifi-connectioninfo
+8. logcat blocked → debug via log ke file publik (Download/)
+9. getBoundingClientRect = cara dapat posisi elemen untuk kursor visual
+10. Elemen display:none → rect 0×0 → clamp posisi kursor
+11. YouTube trending: mobile web butuh login; Piped API = solusi (api.piped.private.coffee)
+12. evaluateJavascript tidak wait promise → simpan ke window var + polling
 
 ## Install
-Download `minibrowser.apk` → install → buka app → Allow notification permission
+Download `minibrowser.apk` → install → buka app → Allow notification
 
 ## Test
 ```bash
-IP=$(termux-wifi-connectioninfo | python3 -c 'import json,sys; print(json.load(sys.stdin)["ip"])')
-curl http://$IP:8888/health
+bash ~/kiro_tools/demo_cursor.sh       # demo 6 langkah
+bash ~/kiro_tools/test_minibrowser.sh  # test 9 endpoint
 ```

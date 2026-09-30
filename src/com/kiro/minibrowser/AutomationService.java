@@ -21,6 +21,7 @@ public class AutomationService extends android.app.Service {
 
     @Override public void onCreate() {
         super.onCreate();
+        try {
         NotificationManager nm = getSystemService(NotificationManager.class);
         NotificationChannel ch = new NotificationChannel(CHANNEL_ID,
             "MiniBrowser Automation", NotificationManager.IMPORTANCE_LOW);
@@ -33,6 +34,11 @@ public class AutomationService extends android.app.Service {
             .setOngoing(true)
             .build();
         startForeground(NOTIF_ID, n);
+        android.util.Log.i("AutomationService", "foreground OK");
+        } catch (Throwable t) {
+            android.util.Log.e("AutomationService", "onCreate error", t);
+            // Jangan crash — lanjut sebagai service biasa
+        }
     }
 
     @Override public int onStartCommand(Intent intent, int flags, int startId) {

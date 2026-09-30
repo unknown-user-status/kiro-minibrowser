@@ -45,7 +45,7 @@ import java.util.regex.Pattern;
  *   POST /clear                      (clear logs)
  */
 public class AutomationServer {
-    private static final int PORT = 8080;
+    private static final int PORT = 8888;
     private static volatile ServerSocket server;
     private static volatile BrowserEngine engine;
     private static final ExecutorService pool = Executors.newFixedThreadPool(4);

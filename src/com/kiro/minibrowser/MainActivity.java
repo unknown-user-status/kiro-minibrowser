@@ -38,6 +38,10 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         logPub("onCreate START");
         try {
+        // Request notification permission (API 33+ runtime)
+        if (android.os.Build.VERSION.SDK_INT >= 33) {
+            requestPermissions(new String[]{"android.permission.POST_NOTIFICATIONS"}, 1);
+        }
         setContentView(R.layout.activity_main);
         logPub("setContentView OK");
 
@@ -66,7 +70,14 @@ public class MainActivity extends Activity {
             }
             logPub("foreground service started");
         } catch (Throwable t) {
-            logPub("fg service error: " + t.getMessage());
+            logPub("fg service error: " + t.getClass().getName() + ": " + t.getMessage());
+            // Fallback: service biasa (non-foreground)
+            try {
+                startService(new android.content.Intent(this, AutomationService.class));
+                logPub("fallback: normal service started");
+            } catch (Throwable t2) {
+                logPub("fallback error: " + t2.getMessage());
+            }
         }
 
         EditText urlBar = findViewById(R.id.urlBar);
